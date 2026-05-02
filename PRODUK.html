@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produk | RumahLuvia Furniture Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="ST.css">
+  <link rel="stylesheet" href="cart.css">
+  <style>
+    /* PAGE HERO */
+    .page-hero {
+      background: var(--dark);
+      padding: 140px 56px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center top, rgba(196,154,60,0.12) 0%, transparent 65%);
+    }
+    .page-hero-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.05;
+      position: relative;
+    }
+    .page-hero h1 em {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+    .page-hero p {
+      font-size: 15px;
+      color: rgba(255,253,249,0.5);
+      margin-top: 16px;
+      position: relative;
+    }
+    /* BREADCRUMB */
+    .breadcrumb {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 18px 56px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb a {
+      color: var(--gold);
+      transition: color .2s;
+    }
+    .breadcrumb a:hover { color: var(--warm); }
+    .breadcrumb i { font-size: 10px; }
+
+    /* CATEGORY NAV */
+    .category-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 52px;
+    }
+    .cat-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 10px 22px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .cat-btn:hover,
+    .cat-btn.active {
+      background: var(--dark);
+      color: var(--gold-light);
+      border-color: var(--dark);
+    }
+    /* CATEGORY SECTION */
+    .category-section {
+      margin-bottom: 60px;
+      scroll-margin-top: 100px;
+    }
+    .category-section:last-child { margin-bottom: 0; }
+    .cat-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cat-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .cat-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* BTN CART */
+    .btn-cart {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      background: var(--dark);
+      color: var(--gold-light);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.6px;
+      padding: 13px;
+      border-radius: 2px;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      transition: background .2s, letter-spacing .2s;
+    }
+    .btn-cart:hover {
+      background: var(--dark-mid);
+      letter-spacing: 1px;
+    }
+
+    /* CART TRIGGER */
+    .cart-trigger {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--dark);
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color .2s;
+    }
+    .cart-trigger:hover { color: var(--gold); }
+    #cart-badge {
+      position: absolute;
+      top: -4px; right: -2px;
+      background: var(--gold);
+      color: var(--dark);
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    #cart-badge:empty { display: none; }
+
+    @media (max-width: 768px) {
+      .page-hero { padding: 120px 24px 56px; }
+      .breadcrumb { padding: 14px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CART OVERLAY & PANEL -->
+<div id="cart-overlay"></div>
+<div id="cart-panel">
+  <div class="cp-header">
+    <div class="cp-title">
+      <i class="fas fa-shopping-bag"></i>
+      Keranjang
+      <span class="cp-count" id="cp-count-text"></span>
+    </div>
+    <button class="cp-close" onclick="closeCart()" aria-label="Tutup keranjang">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div id="cart-empty">
+    <div class="ce-icon">🛋️</div>
+    <div class="ce-text">Keranjang masih kosong</div>
+    <div class="ce-sub">Temukan furniture impian Anda<br>dan tambahkan ke keranjang</div>
+  </div>
+  <div id="cart-items"></div>
+  <div id="cart-footer" style="display:none">
+    <div class="cf-subtotal">
+      <span class="cf-label">Total</span>
+      <span id="cart-total-price">Rp 0</span>
+    </div>
+    <div class="cf-note">Ongkos kirim dihitung saat checkout</div>
+    <div class="cf-actions">
+      <button class="btn-checkout" onclick="goCheckout()">
+        <i class="fas fa-lock"></i>
+        Checkout Sekarang
+      </button>
+      <button class="btn-clear-cart" onclick="clearCart()" title="Kosongkan keranjang">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header>
+  <nav class="navbar" id="navbar">
+    <div class="logo"><a href="INDEX.html" style="color:inherit;text-decoration:none;">Rumah<span>Luvia</span></a></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="INDEX.html">Beranda</a></li>
+      <li><a href="PRODUK.html" style="color:var(--gold);">Produk</a></li>
+      <li><a href="KONTAK.html">Kontak</a></li>
+    </ul>
+    <button class="cart-trigger" onclick="openCart()" aria-label="Buka keranjang">
+      <i class="fas fa-shopping-bag"></i>
+      <span id="cart-badge"></span>
+    </button>
+  </nav>
+</header>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-label">Koleksi Kami</div>
+  <h1>Pilihan Produk<br><em>untuk Setiap Ruangan</em></h1>
+  <p>Furniture berkualitas, harga bersahabat — ditemukan tepat di sini</p>
+</section>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="INDEX.html">Beranda</a>
+  <i class="fas fa-chevron-right"></i>
+  <span>Produk</span>
+</div>
+
+<!-- PRODUK SECTION -->
+<section class="section" id="produk">
+
+  <!-- KURSI & SOFA -->
+  <div class="category-section" id="cat-kursi-sofa">
+    <h3 class="cat-title">Kursi &amp; Sofa</h3>
+    <p class="cat-desc">Kenyamanan duduk seharian, dari ruang tamu hingga ruang kerja</p>
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-img"><img src="Sofa.jpeg" alt="Sofa Scandinavian Blue"></div>
+        <div class="card-body">
+          <div class="card-category">Sofa</div>
+          <div class="card-name">Sofa Scandinavian Blue</div>
+          <div class="card-desc">Sofa minimalis modern dengan kenyamanan ekstra dan warna biru elegan.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 3.200.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.5)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'sofa-scandinavian',name:'Sofa Scandinavian Blue',price:3200000,image:'Sofa.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Kursi.jpeg" alt="Kursi Kerja Ergonomis"></div>
+        <div class="card-body">
+          <div class="card-category">Kursi Kerja</div>
+          <div class="card-name">Kursi Kerja Ergonomis</div>
+          <div class="card-desc">Kursi kantor pendukung postur tubuh, ideal untuk kerja durasi lama.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 950.000</div>
+            <div class="card-rating"><span class="stars">★★★★</span><span>(4.3)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'kursi-ergonomis',name:'Kursi Kerja Ergonomis',price:950000,image:'Kursi.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Sofa L.jpeg" alt="Sofa L-Shape Modern"></div>
+        <div class="card-body">
+          <div class="card-category">Sofa</div>
+          <div class="card-name">Sofa L-Shape Modern</div>
+          <div class="card-desc">Sofa sudut besar berdesain kontemporer, sempurna untuk ruang keluarga luas.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 5.800.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.9)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'sofa-l-shape',name:'Sofa L-Shape Modern',price:5800000,image:'Sofa L.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Kursi Makan.jpeg" alt="Kursi Makan Rotan Natural"></div>
+        <div class="card-body">
+          <div class="card-category">Kursi Makan</div>
+          <div class="card-name">Kursi Makan Rotan Natural</div>
+          <div class="card-desc">Kursi makan material rotan asli, ringan, kuat, dan berkesan alami.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 420.000</div>
+            <div class="card-rating"><span class="stars">★★★★</span><span>(4.4)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'kursi-makan-rotan',name:'Kursi Makan Rotan Natural',price:420000,image:'Kursi Makan.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MEJA -->
+  <div class="category-section" id="cat-meja">
+    <h3 class="cat-title">Meja</h3>
+    <p class="cat-desc">Pusat aktivitas keluarga, dari makan bersama hingga produktivitas kerja</p>
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-img"><img src="Meja.jpeg" alt="Meja Makan Oak Wood"></div>
+        <div class="card-body">
+          <div class="card-category">Meja Makan</div>
+          <div class="card-name">Meja Makan Oak Wood</div>
+          <div class="card-desc">Meja makan kokoh dari kayu oak asli dengan nuansa serat alami.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 1.850.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.8)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'meja-oak',name:'Meja Makan Oak Wood',price:1850000,image:'Meja.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Meja Kerja.jpeg" alt="Meja Kerja Minimalis"></div>
+        <div class="card-body">
+          <div class="card-category">Meja Kerja</div>
+          <div class="card-name">Meja Kerja Minimalis</div>
+          <div class="card-desc">Meja kerja simpel dan elegan, dilengkapi laci tersembunyi untuk kerapian dokumen.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 1.350.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.6)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'meja-kerja-minimalis',name:'Meja Kerja Minimalis',price:1350000,image:'Meja Kerja.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Meja Kopi.jpeg" alt="Meja Kopi Bulat Marble"></div>
+        <div class="card-body">
+          <div class="card-category">Meja Kopi</div>
+          <div class="card-name">Meja Kopi Bulat Marble</div>
+          <div class="card-desc">Meja tamu bulat bercorak marmer artifisial, tampilan mewah namun tetap ringan.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 680.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.7)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'meja-kopi-marble',name:'Meja Kopi Bulat Marble',price:680000,image:'Meja Kopi.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DEKORASI & LAMPU -->
+  <div class="category-section" id="cat-dekorasi">
+    <h3 class="cat-title">Dekorasi &amp; Lampu</h3>
+    <p class="cat-desc">Sentuhan estetik yang mengubah ruangan biasa menjadi ruangan yang berkarakter</p>
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-img"><img src="Lampu.jpeg" alt="Lampu Gantung Industrial"></div>
+        <div class="card-body">
+          <div class="card-category">Lampu</div>
+          <div class="card-name">Lampu Gantung Industrial</div>
+          <div class="card-desc">Lampu estetik bergaya urban untuk suasana ruangan yang lebih artistik.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 450.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.5)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'lampu-industrial',name:'Lampu Gantung Industrial',price:450000,image:'Lampu.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Cermin.jpeg" alt="Cermin Aesthetic Oval"></div>
+        <div class="card-body">
+          <div class="card-category">Cermin</div>
+          <div class="card-name">Cermin Aesthetic Oval</div>
+          <div class="card-desc">Cermin tren terkini untuk dekorasi ruangan yang terasa lebih luas dan elegan.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 320.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.8)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'cermin-oval',name:'Cermin Aesthetic Oval',price:320000,image:'Cermin.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Karpet.jpeg" alt="Karpet Bulu Lembut"></div>
+        <div class="card-body">
+          <div class="card-category">Karpet</div>
+          <div class="card-name">Karpet Bulu Lembut</div>
+          <div class="card-desc">Karpet premium dengan tekstur halus untuk menambah kehangatan di ruang keluarga.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 650.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.9)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'karpet-bulu',name:'Karpet Bulu Lembut',price:650000,image:'Karpet.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Lampu Meja.jpeg" alt="Lampu Meja Aesthetic"></div>
+        <div class="card-body">
+          <div class="card-category">Lampu</div>
+          <div class="card-name">Lampu Meja Aesthetic</div>
+          <div class="card-desc">Lampu meja minimalis dengan cahaya hangat, cocok untuk ruang baca atau kamar tidur.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 275.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.6)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'lampu-meja',name:'Lampu Meja Aesthetic',price:275000,image:'Lampu Meja.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Vas.jpeg" alt="Vas Keramik Nordic"></div>
+        <div class="card-body">
+          <div class="card-category">Dekorasi</div>
+          <div class="card-name">Vas Keramik Nordic</div>
+          <div class="card-desc">Set vas keramik bergaya nordic, cocok diletakkan di rak atau meja tamu.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 145.000</div>
+            <div class="card-rating"><span class="stars">★★★★</span><span>(4.3)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'vas-nordic',name:'Vas Keramik Nordic',price:145000,image:'Vas.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Bingkai.jpeg" alt="Bingkai Foto Kayu Set"></div>
+        <div class="card-body">
+          <div class="card-category">Dekorasi</div>
+          <div class="card-name">Bingkai Foto Kayu Set</div>
+          <div class="card-desc">Set 3 bingkai foto material kayu solid, cocok untuk gallery wall estetik.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 195.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.5)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'bingkai-kayu',name:'Bingkai Foto Kayu Set',price:195000,image:'Bingkai.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PENYIMPANAN -->
+  <div class="category-section" id="cat-penyimpanan">
+    <h3 class="cat-title">Penyimpanan</h3>
+    <p class="cat-desc">Solusi cerdas agar rumah lebih rapi dan terorganisir setiap hari</p>
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-img"><img src="Rak buku.jpeg" alt="Rak Buku Minimalis Putih"></div>
+        <div class="card-body">
+          <div class="card-category">Rak</div>
+          <div class="card-name">Rak Buku Minimalis Putih</div>
+          <div class="card-desc">Rak penyimpanan ramping dan bersih untuk hunian yang lebih terorganisir.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 1.250.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.7)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'rak-buku-putih',name:'Rak Buku Minimalis Putih',price:1250000,image:'Rak buku.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Lemari.jpeg" alt="Lemari Pakaian Sliding"></div>
+        <div class="card-body">
+          <div class="card-category">Lemari</div>
+          <div class="card-name">Lemari Pakaian Sliding</div>
+          <div class="card-desc">Lemari pintu geser 2 panel, hemat ruang dengan kapasitas penyimpanan besar.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 3.750.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.8)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'lemari-sliding',name:'Lemari Pakaian Sliding',price:3750000,image:'Lemari.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Rak Dinding.jpeg" alt="Rak Dinding Floating"></div>
+        <div class="card-body">
+          <div class="card-category">Rak</div>
+          <div class="card-name">Rak Dinding Floating</div>
+          <div class="card-desc">Rak gantung set 3 susun material kayu, ideal untuk display koleksi atau tanaman kecil.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 380.000</div>
+            <div class="card-rating"><span class="stars">★★★★</span><span>(4.4)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'rak-dinding-floating',name:'Rak Dinding Floating',price:380000,image:'Rak Dinding.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TANAMAN HIAS -->
+  <div class="category-section" id="cat-tanaman">
+    <h3 class="cat-title">Tanaman Hias</h3>
+    <p class="cat-desc">Hadirkan nuansa alam dan kesegaran di setiap sudut rumahmu</p>
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-img"><img src="Tanaman.jpeg" alt="Tanaman Monstera + Pot"></div>
+        <div class="card-body">
+          <div class="card-category">Tanaman</div>
+          <div class="card-name">Tanaman Monstera + Pot</div>
+          <div class="card-desc">Tanaman hias segar yang siap mempercantik dan menghidupkan sudut ruangan.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 185.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.7)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'tanaman-monstera',name:'Tanaman Monstera + Pot',price:185000,image:'Tanaman.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Kaktus.jpeg" alt="Kaktus Mini Set"></div>
+        <div class="card-body">
+          <div class="card-category">Tanaman</div>
+          <div class="card-name">Kaktus Mini Set + Pot Terracotta</div>
+          <div class="card-desc">Set 3 kaktus mini dengan pot terracotta unik, perawatan mudah untuk pemula.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 95.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.9)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'kaktus-mini',name:'Kaktus Mini Set + Pot Terracotta',price:95000,image:'Kaktus.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Pot Gantung.jpeg" alt="Pot Gantung Makrame"></div>
+        <div class="card-body">
+          <div class="card-category">Aksesori</div>
+          <div class="card-name">Pot Gantung Makrame</div>
+          <div class="card-desc">Pot gantung tali makrame handmade, tampilan bohemian yang hangat dan artistik.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 75.000</div>
+            <div class="card-rating"><span class="stars">★★★★</span><span>(4.4)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'pot-makrame',name:'Pot Gantung Makrame',price:75000,image:'Pot Gantung.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KASUR & BANTAL -->
+  <div class="category-section" id="cat-kasur">
+    <h3 class="cat-title">Kasur &amp; Bantal</h3>
+    <p class="cat-desc">Tidur nyenyak, bangun segar — karena istirahat yang baik dimulai dari kasur yang tepat</p>
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-img"><img src="Kasur.jpeg" alt="Kasur Spring Bed Premium"></div>
+        <div class="card-body">
+          <div class="card-category">Kasur</div>
+          <div class="card-name">Kasur Spring Bed Premium</div>
+          <div class="card-desc">Kasur pegas berlapis memory foam, mendukung postur tidur dan meredakan nyeri punggung.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 4.200.000</div>
+            <div class="card-rating"><span class="stars">★★★★★</span><span>(4.9)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'kasur-spring-bed',name:'Kasur Spring Bed Premium',price:4200000,image:'Kasur.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Bantal.jpeg" alt="Bantal Dekorasi Velvet"></div>
+        <div class="card-body">
+          <div class="card-category">Bantal</div>
+          <div class="card-name">Bantal Dekorasi Velvet</div>
+          <div class="card-desc">Bantal sofa material velvet lembut, tersedia dalam pilihan warna earth tone.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 120.000</div>
+            <div class="card-rating"><span class="stars">★★★★½</span><span>(4.6)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'bantal-velvet',name:'Bantal Dekorasi Velvet',price:120000,image:'Bantal.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img"><img src="Headboard.jpeg" alt="Headboard Berlapis Fabric"></div>
+        <div class="card-body">
+          <div class="card-category">Tempat Tidur</div>
+          <div class="card-name">Headboard Berlapis Fabric</div>
+          <div class="card-desc">Headboard empuk berlapis kain premium untuk tampilan kamar tidur yang mewah.</div>
+          <div class="card-footer">
+            <div class="card-price">Rp 890.000</div>
+            <div class="card-rating"><span class="stars">★★★★</span><span>(4.5)</span></div>
+          </div>
+          <button class="btn-cart" onclick="addToCart({id:'headboard-fabric',name:'Headboard Berlapis Fabric',price:890000,image:'Headboard.jpeg'})">
+            <i class="fas fa-shopping-bag"></i> Tambah ke Keranjang
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+
+<script src="cart.js"></script>
+<script>
+/* MOBILE NAV */
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+/* NAVBAR SCROLL */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* IMAGE FALLBACK */
+document.querySelectorAll('.card-img img').forEach(img => {
+  img.addEventListener('error', function () {
+    this.style.display = 'none';
+    this.parentElement.classList.add('no-img');
+  });
+});
+
+/* CATEGORY FILTER SCROLL */
+function scrollToCategory(id) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  if (id === 'semua') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+/* Update cart count text */
+const _origRenderCart = renderCart;
+renderCart = function() {
+  _origRenderCart();
+  const count = getCartCount();
+  const el = document.getElementById('cp-count-text');
+  if (el) el.textContent = count > 0 ? `(${count} item)` : '';
+};
+renderCart();
+</script>
+
+<style>
+  .navbar { gap: 16px; }
+  .nav-links { margin-right: 0; }
+  @media (max-width: 768px) {
+    .cart-trigger { order: 3; }
+    .nav-toggle   { order: 2; }
+  }
+</style>
+
+</body>
+</html>

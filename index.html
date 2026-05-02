@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RumahLuvia | Furniture Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="ST.css">
+  <link rel="stylesheet" href="cart.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════ 
+     CART OVERLAY & PANEL
+═══════════════════════════ -->
+<div id="cart-overlay"></div>
+
+<div id="cart-panel">
+  <div class="cp-header">
+    <div class="cp-title">
+      <i class="fas fa-shopping-bag"></i>
+      Keranjang
+      <span class="cp-count" id="cp-count-text"></span>
+    </div>
+    <button class="cp-close" onclick="closeCart()" aria-label="Tutup keranjang">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div id="cart-empty">
+    <div class="ce-icon">🛋️</div>
+    <div class="ce-text">Keranjang masih kosong</div>
+    <div class="ce-sub">Temukan furniture impian Anda<br>dan tambahkan ke keranjang</div>
+  </div>
+
+  <!-- Items -->
+  <div id="cart-items"></div>
+
+  <!-- Footer -->
+  <div id="cart-footer" style="display:none">
+    <div class="cf-subtotal">
+      <span class="cf-label">Total</span>
+      <span id="cart-total-price">Rp 0</span>
+    </div>
+    <div class="cf-note">Ongkos kirim dihitung saat checkout</div>
+    <div class="cf-actions">
+      <button class="btn-checkout" onclick="goCheckout()">
+        <i class="fas fa-lock"></i>
+        Checkout Sekarang
+      </button>
+      <button class="btn-clear-cart" onclick="clearCart()" title="Kosongkan keranjang">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header>
+  <nav class="navbar" id="navbar">
+    <div class="logo">Rumah<span>Luvia</span></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="INDEX.html">Beranda</a></li>
+      <li><a href="PRODUK.html">Produk</a></li>
+      <li><a href="KONTAK.html">Kontak</a></li>
+    </ul>
+    <!-- Cart trigger in navbar -->
+    <button class="cart-trigger" onclick="openCart()" aria-label="Buka keranjang">
+      <i class="fas fa-shopping-bag"></i>
+      <span id="cart-badge"></span>
+    </button>
+  </nav>
+</header>
+
+<!-- HERO SLIDESHOW -->
+<section class="hero" id="beranda">
+  <div class="slides-container">
+    <div class="slide active" style="background-image: url('Sofa.jpeg')"><div class="slide-overlay"></div></div>
+    <div class="slide" style="background-image: url('Meja.jpeg')"><div class="slide-overlay"></div></div>
+    <div class="slide" style="background-image: url('Kursi.jpeg')"><div class="slide-overlay"></div></div>
+    <div class="slide" style="background-image: url('Karpet.jpeg')"><div class="slide-overlay"></div></div>
+    <div class="slide" style="background-image: url('Lampu.jpeg')"><div class="slide-overlay"></div></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Furniture Premium</div>
+    <h1>Rumah impian<br><em>Semua orang</em></h1>
+    <p>Temukan kehangatan di setiap sudut rumah<br>Furniture Berkualitas, Harga Bersahabat</p>
+    <div class="hero-cta-group">
+    <a href="PRODUK.html" class="btn-produk-primary">
+    Lihat Produk <span class="btn-produk-icon">→</span>
+    </a>
+  </div>
+
+  <button class="slide-arrow slide-prev" id="slidePrev" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></button>
+  <button class="slide-arrow slide-next" id="slideNext" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></button>
+
+  <div class="slide-dots" id="slideDots">
+    <span class="dot active" onclick="goToSlide(0)"></span>
+    <span class="dot" onclick="goToSlide(1)"></span>
+    <span class="dot" onclick="goToSlide(2)"></span>
+    <span class="dot" onclick="goToSlide(3)"></span>
+    <span class="dot" onclick="goToSlide(4)"></span>
+  </div>
+</section>
+
+<!-- Cart scripts -->
+<script src="cart.js"></script>
+
+<script>
+/* ── SLIDESHOW ── */
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.dot');
+let autoTimer;
+
+function showSlide(n) {
+  slides[currentSlide].classList.remove('active');
+  dots[currentSlide].classList.remove('active');
+  currentSlide = (n + slides.length) % slides.length;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
+
+function goToSlide(n) {
+  clearInterval(autoTimer);
+  showSlide(n);
+  autoTimer = setInterval(() => showSlide(currentSlide + 1), 5000);
+}
+
+document.getElementById('slideNext').addEventListener('click', () => goToSlide(currentSlide + 1));
+document.getElementById('slidePrev').addEventListener('click', () => goToSlide(currentSlide - 1));
+autoTimer = setInterval(() => showSlide(currentSlide + 1), 5000);
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const el = document.querySelector(a.getAttribute('href'));
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+/* ── MOBILE NAV ── */
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+/* ── NAVBAR SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ── IMAGE FALLBACK ── */
+document.querySelectorAll('.card-img img').forEach(img => {
+  img.addEventListener('error', function () {
+    this.style.display = 'none';
+    this.parentElement.classList.add('no-img');
+  });
+});
+
+/* ── Update cp-count-text ── */
+const _origRenderCart = renderCart;
+renderCart = function() {
+  _origRenderCart();
+  const count = getCartCount();
+  const el = document.getElementById('cp-count-text');
+  if (el) el.textContent = count > 0 ? `(${count} item)` : '';
+};
+renderCart();
+</script>
+
+<!-- Extra: fix navbar to accommodate cart icon -->
+<style>
+  .navbar {
+    gap: 16px;
+  }
+  .nav-links {
+    margin-right: 0;
+  }
+  @media (max-width: 768px) {
+    .cart-trigger { order: 3; }
+    .nav-toggle   { order: 2; }
+  }
+</style>
+
+</body>
+</html>
